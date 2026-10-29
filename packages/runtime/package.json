@@ -1,0 +1,15 @@
+{
+  "name": "@sigil-native/runtime",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Sigil runtime: sandboxed program execution, hooks, reconciler -> SigilOps (zero-DOM, isomorphic)",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./script": "./src/runtime.ts",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "build": "tsdown"
+  }
+}

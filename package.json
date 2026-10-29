@@ -1,0 +1,46 @@
+{
+  "name": "sigil-native",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "LLM writes sigils, native renders them. An open runtime for LLM-generated native UI (the DIL architecture).",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
+    "typecheck:rs": "tsrs --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "stylelint": "stylelint --allow-empty-input \"**/*.css\"",
+    "commit": "cz",
+    "test": "node tests/e2e.ts",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@fetuye/commitlint": "^1.0.0",
+    "@fetuye/cz": "^1.0.0",
+    "@fetuye/eslint": "^1.0.0",
+    "@fetuye/prettier": "^1.0.0",
+    "@fetuye/stylelint": "^1.0.0",
+    "@sigil-native/compiler": "workspace:*",
+    "@sigil-native/lang": "workspace:*",
+    "@sigil-native/runtime": "workspace:*",
+    "@sigil-native/web": "workspace:*",
+    "@types/node": "^26.6.6",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
+    "eslint": "^9.10.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "stylelint": "^16.26.1",
+    "tsdown": "^0.15.0",
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "typescript": "^5.9.0"
+  }
+}

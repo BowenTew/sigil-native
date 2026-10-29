@@ -1,0 +1,16 @@
+{
+  "name": "@sigil-native/lang",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Sigil language definition: catalog constants, design tokens, ops protocol version. The single source of truth.",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./catalog": "./src/catalog.ts",
+    "./spec/*": "./spec/*",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "build": "tsdown"
+  }
+}

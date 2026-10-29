@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+  Sigil Runner — sandboxed execution environment.
+
+  Loaded by the host page as a hidden iframe with sandbox="allow-scripts"
+  (no allow-same-origin → opaque origin). It fetches the prebuilt worker
+  bundle (worker.js, built from src/worker.ts with the runtime inlined),
+  wraps it into a blob Web Worker, and relays messages: host ↔ worker.
+
+  CSP mirrors the reference runner: default-src 'none', blob workers only,
+  'unsafe-eval' for the compiled program evaluation.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; connect-src *; worker-src blob: data:; img-src *"
+    />
+    <title>Sigil Runner</title>
+  </head>
+  <body>
+    <script>
+      ;(function () {
+        var worker = null
+        var lastEval = null // re-sent to the worker after a watchdog restart
+        var watchdog = null
+        var msgId = null
+        var restarts = 0
+
+        function start() {
+          return fetch('./worker.iife.js')
+            .then(function (r) {
+              return r.text()
+            })
+            .then(function (src) {
+              var blob = new Blob([src], { type: 'text/javascript' })
+              var url = URL.createObjectURL(blob)
+              var w = new Worker(url)
+              w.onmessage = function (e) {
+                clearTimeout(watchdog)
+                forward(e.data)
+              }
+              return w
+            })
+        }
+
+        function forward(data) {
+          if (window.parent) {
+            window.parent.postMessage({ __sigil: 'worker', msgId: msgId, data: data }, '*')
+          }
+        }
+
+        function armWatchdog() {
+          clearTimeout(watchdog)
+          watchdog = setTimeout(function () {
+            // Program did not respond in time: quarantine it by restarting
+            // the worker. Replay at most twice — a program that hangs again is
+            // almost certainly an infinite loop written by the model; stop
+            // replaying instead of restarting forever.
+            try {
+              worker.terminate()
+            } catch (_) {}
+            worker = null
+            restarts++
+            start().then(function () {
+              if (lastEval && restarts <= 2) {
+                worker.postMessage(lastEval)
+              }
+            })
+            forward({
+              type: 'error',
+              message:
+                restarts <= 2
+                  ? 'watchdog: worker restarted'
+                  : 'watchdog: program keeps hanging (infinite loop?), giving up',
+            })
+          }, 3000)
+        }
+
+        window.addEventListener('message', function (e) {
+          var d = e.data || {}
+          if (d.__sigil !== 'host') return
+          msgId = d.msgId
+          if (!worker) {
+            start().then(function () {
+              handle(d)
+            })
+          } else {
+            handle(d)
+          }
+        })
+
+        function handle(d) {
+          if (d.type === 'eval') {
+            lastEval = { type: 'eval', code: d.code, constants: d.constants, appData: d.appData }
+            restarts = 0 // new program from the server: reset the budget
+            armWatchdog()
+            worker.postMessage(lastEval)
+          } else if (d.type === 'event') {
+            worker.postMessage({ type: 'event', fnId: d.fnId, args: d.args })
+          }
+        }
+      })()
+    </script>
+  </body>
+</html>

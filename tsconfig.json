@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@sigil-native/lang": ["./packages/lang/src/index.ts"],
+      "@sigil-native/compiler": ["./packages/compiler/src/index.ts"],
+      "@sigil-native/runtime": ["./packages/runtime/src/index.ts"],
+      "@sigil-native/web": ["./renderers/web/src/index.ts"],
+      "@sigil-native/compiler/src/*": ["./packages/compiler/src/*"],
+      "@sigil-native/lang/src/*": ["./packages/lang/src/*"],
+      "@sigil-native/runtime/src/*": ["./packages/runtime/src/*"],
+      "@sigil-native/web/src/*": ["./renderers/web/src/*"]
+    },
+    "lib": ["es2022", "dom", "webworker"],
+    "types": ["node"]
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "renderers/*/src/**/*.ts",
+    "tests/**/*.ts",
+    "packages/*/tsdown.config.ts",
+    "renderers/*/tsdown.config.ts"
+  ]
+}
