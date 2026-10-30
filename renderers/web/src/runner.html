@@ -31,6 +31,7 @@
         function start() {
           return fetch('./worker.iife.js')
             .then(function (r) {
+              if (!r.ok) throw new Error('worker.iife.js ' + r.status)
               return r.text()
             })
             .then(function (src) {
@@ -42,6 +43,10 @@
                 forward(e.data)
               }
               return w
+            })
+            .catch(function (err) {
+              forward({ type: 'error', message: 'runner: failed to start worker: ' + err })
+              return null
             })
         }
 
@@ -63,7 +68,8 @@
             } catch (_) {}
             worker = null
             restarts++
-            start().then(function () {
+            start().then(function (w) {
+              worker = w
               if (lastEval && restarts <= 2) {
                 worker.postMessage(lastEval)
               }
@@ -83,7 +89,9 @@
           if (d.__sigil !== 'host') return
           msgId = d.msgId
           if (!worker) {
-            start().then(function () {
+            start().then(function (w) {
+              if (!w) return
+              worker = w
               handle(d)
             })
           } else {
