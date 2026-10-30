@@ -1,0 +1,277 @@
+:root {
+  /* colors */
+  --white: #fff;
+  --black: #0d0d0d;
+  --gray-100: #f7f7f8;
+  --gray-300: #ececec;
+  --gray-500: #e5e5e5;
+  --gray-800: #5d5d5d;
+  --accent: #10a37f;
+  --accent-light: #19c39c;
+
+  /* spacing (4px scale) */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 6px;
+  --sp-4: 8px;
+  --sp-5: 10px;
+  --sp-6: 12px;
+  --sp-7: 14px;
+  --sp-8: 16px;
+  --sp-10: 20px;
+
+  /* font sizes */
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-15: 15px;
+  --fs-16: 16px;
+  --fs-19: 19px;
+  --fs-24: 24px;
+
+  /* line heights */
+  --lh-snug: 1.55;
+
+  /* radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-full: 999px;
+
+  /* layout */
+  --pane-h: 70vh;
+  --chart-h: 140px;
+  --bar-min: 12px;
+  --slider-val-w: 2.5ch;
+
+  /* misc */
+  --auto: auto;
+  --zero: 0px;
+  --center-x: 50%;
+  --z-toast: 99;
+  --bw: 1px;
+  --font: -apple-system, blinkmacsystemfont, 'Segoe UI', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --mono: ui-monospace, sfmono-regular, menlo, consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: var(--zero);
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  font-size: var(--fs-15);
+  line-height: var(--lh-snug);
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  padding: var(--sp-6) var(--sp-8);
+  border-bottom: var(--bw) solid var(--gray-500);
+  gap: var(--sp-5);
+}
+
+.brand {
+  font-size: var(--fs-16);
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--gray-800);
+  font-size: var(--fs-13);
+}
+
+.badge {
+  margin-left: var(--auto);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: var(--fs-11);
+}
+
+.grid {
+  display: grid;
+  align-items: start;
+  padding: var(--sp-8) var(--sp-10);
+  gap: var(--sp-8);
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (width <= 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.col h2 {
+  color: var(--gray-800);
+  font-size: var(--fs-13);
+  font-weight: 600;
+  margin-block: var(--sp-1) var(--sp-4);
+}
+
+.pane {
+  overflow: auto;
+  height: var(--pane-h);
+  padding: var(--sp-6);
+  border: var(--bw) solid var(--gray-500);
+  border-radius: var(--r-md);
+  margin: var(--zero);
+  background: var(--gray-100);
+  font-family: var(--mono);
+  font-size: var(--fs-12);
+  line-height: var(--lh-snug);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.ui-root {
+  padding: var(--sp-7);
+  border: var(--bw) solid var(--gray-500);
+  border-radius: var(--r-md);
+}
+
+/* Sigil native components (same tokens as the web renderer) */
+.sigil-box.bordered {
+  border: var(--bw) solid var(--gray-500);
+  border-radius: var(--r-lg);
+}
+
+.sigil-title {
+  font-weight: 600;
+}
+
+.sigil-title.t-xl {
+  font-size: var(--fs-24);
+}
+
+.sigil-title.t-lg {
+  font-size: var(--fs-19);
+}
+
+.sigil-title.t-md {
+  font-size: var(--fs-15);
+}
+
+.sigil-text {
+  margin: var(--sp-1) var(--zero);
+}
+
+.sigil-caption {
+  color: var(--gray-800);
+  font-size: var(--fs-12);
+}
+
+.sigil-chip {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-7);
+  border: var(--bw) solid var(--gray-500);
+  border-radius: var(--r-full);
+  background: var(--gray-100);
+  font-size: var(--fs-12);
+}
+
+.sigil-divider {
+  width: 100%;
+  border: none;
+  border-top: var(--bw) solid var(--gray-500);
+}
+
+.sigil-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+}
+
+.sigil-slider input {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.sigil-slider-value {
+  min-width: var(--slider-val-w);
+  font-family: var(--mono);
+  font-size: var(--fs-13);
+  text-align: right;
+}
+
+.sigil-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.sigil-checkbox input {
+  width: var(--sp-8);
+  height: var(--sp-8);
+  accent-color: var(--accent);
+}
+
+.sigil-button {
+  padding: var(--sp-4) var(--sp-7);
+  border: var(--bw) solid var(--gray-500);
+  border-radius: var(--r-md);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  font-size: var(--fs-13);
+}
+
+.sigil-button:hover {
+  background: var(--gray-100);
+}
+
+.sigil-button.block {
+  width: 100%;
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--white);
+}
+
+.sigil-chart .sigil-chart-bars {
+  display: flex;
+  height: var(--chart-h);
+  align-items: flex-end;
+  padding: var(--sp-4) var(--sp-2) var(--zero);
+  gap: var(--sp-6);
+}
+
+.sigil-chart-bar {
+  min-width: var(--bar-min);
+  flex: 1;
+  border-radius: var(--r-sm) var(--r-sm) var(--sp-1) var(--sp-1);
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- bar heights are data-driven */
+  transition: height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sigil-chart-labels {
+  display: flex;
+  padding: var(--sp-2) var(--sp-2) var(--zero);
+  color: var(--gray-800);
+  font-size: var(--fs-11);
+  gap: var(--sp-6);
+}
+
+.sigil-chart-labels span {
+  min-width: var(--bar-min);
+  flex: 1;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  z-index: var(--z-toast);
+  bottom: var(--sp-8);
+  left: var(--center-x);
+  padding: var(--sp-4) var(--sp-8);
+  border-radius: var(--r-md);
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: var(--fs-13);
+  transform: translateX(-50%);
+}

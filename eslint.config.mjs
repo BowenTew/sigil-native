@@ -28,6 +28,13 @@ const eslintConfig = [
       'import/no-extraneous-dependencies': 'off',
     },
   },
+  {
+    files: ['examples/*/scripts/*.mjs'],
+    rules: {
+      // dev servers log their listen address
+      'no-console': 'off',
+    },
+  },
 ]
 
 export default eslintConfig

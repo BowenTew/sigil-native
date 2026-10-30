@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./catalog": "./src/catalog.ts",
     "./runner": "./src/runner.html",
-    "./src/*": "./src/*"
+    "./src/*": "./src/*",
+    "./worker": "./dist/worker.iife.js"
   },
   "scripts": {
     "build": "tsdown"

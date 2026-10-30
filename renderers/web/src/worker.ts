@@ -1,13 +1,13 @@
 // Sigil sandbox worker entry. Bundled (with the runtime inlined) into a
 // classic blob worker by the host page's runner.
 //
-// Runs with no network, no dynamic imports — a demo-grade lockdown mirroring
-// the reference architecture's runner.
+// Runs with no network access and no dynamic imports; timers are kept for
+// the watchdog.
 
 import { createSigilRuntime } from '@sigil-native/runtime'
 
 // ---- lockdown: remove capabilities from the global scope before evaluating
-// anything the model wrote. (Demo-grade: timers are kept for the watchdog.)
+// anything the model wrote.
 try {
   ;(self as any).fetch = undefined
   ;(self as any).XMLHttpRequest = undefined

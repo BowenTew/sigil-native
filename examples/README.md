@@ -1,8 +1,7 @@
 # examples
 
-Full applications demonstrating the sigil-native loop end to end:
-
-- `chat-web` — ChatGPT-style web chat (coming; exists in the dil-demo prototype)
-- `chat-ios` — SwiftUI chat (coming)
-- `catalog-gallery` — every catalog component, rendered and documented;
-  doubles as few-shot material for prompts
+- [`chat-web`](./chat-web) — ChatGPT-style web chat: streaming Sigil from an
+  LLM, per-message sandbox, ops viewer.
+- [`catalog-gallery`](./catalog-gallery) — every catalog component, live:
+  source next to rendered output next to the SigilOps stream.
+- `chat-ios` — SwiftUI chat (planned, see `renderers/ios`).

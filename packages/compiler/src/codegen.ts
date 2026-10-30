@@ -1,7 +1,6 @@
 // Sigil compiler back end: AST -> JavaScript program + constants.
 //
-// Mirrors what OpenAI's server does with model output before any client runs
-// it:
+// The compiler transforms model output before any client runs it:
 //   - markup becomes plain function calls (__sigil.jsx), so the client needs
 //     no Sigil parser at all;
 //   - static text is moved into a constants table (streaming text growth then

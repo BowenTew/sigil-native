@@ -1,0 +1,21 @@
+{
+  "name": "@sigil-native/example-catalog-gallery",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Every Sigil catalog component, live — source next to rendered output",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "pnpm exec tsdown -d && node ../chat-web/scripts/serve.mjs"
+  },
+  "dependencies": {
+    "@sigil-native/compiler": "workspace:*",
+    "@sigil-native/lang": "workspace:*",
+    "@sigil-native/runtime": "workspace:*",
+    "@sigil-native/web": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.15.0"
+  }
+}

@@ -17,8 +17,10 @@
   "include": [
     "packages/*/src/**/*.ts",
     "renderers/*/src/**/*.ts",
+    "examples/*/src/**/*.ts",
     "tests/**/*.ts",
     "packages/*/tsdown.config.ts",
-    "renderers/*/tsdown.config.ts"
+    "renderers/*/tsdown.config.ts",
+    "examples/*/tsdown.config.ts"
   ]
 }

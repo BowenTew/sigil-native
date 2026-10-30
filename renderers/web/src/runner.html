@@ -7,7 +7,7 @@
   bundle (worker.js, built from src/worker.ts with the runtime inlined),
   wraps it into a blob Web Worker, and relays messages: host ↔ worker.
 
-  CSP mirrors the reference runner: default-src 'none', blob workers only,
+  CSP: default-src 'none', blob workers only,
   'unsafe-eval' for the compiled program evaluation.
 -->
 <html lang="en">

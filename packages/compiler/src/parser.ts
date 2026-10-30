@@ -3,7 +3,7 @@
 // Parses the streaming-friendly language: Markdown prose + JSX-like component
 // tags from a fixed catalog + JavaScript for local state and logic.
 //
-// Design goals (mirroring OpenAI's DIL):
+// Design goals:
 //   1. Tolerant of half-written input: the source is cut at its last complete
 //      construct; unfinished tags/expressions are dropped with a diagnostic,
 //      unclosed elements/blocks are auto-closed.

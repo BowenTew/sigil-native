@@ -69,6 +69,41 @@ importers:
         specifier: ^5.9.0
         version: 5.9.3
 
+  examples/catalog-gallery:
+    dependencies:
+      '@sigil-native/compiler':
+        specifier: workspace:*
+        version: link:../../packages/compiler
+      '@sigil-native/lang':
+        specifier: workspace:*
+        version: link:../../packages/lang
+      '@sigil-native/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@sigil-native/web':
+        specifier: workspace:*
+        version: link:../../renderers/web
+    devDependencies:
+      tsdown:
+        specifier: ^0.15.0
+        version: 0.15.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@typescript/native-preview@7.0.0-dev.20260707.2)(typescript@5.9.3)
+
+  examples/chat-web:
+    dependencies:
+      '@sigil-native/compiler':
+        specifier: workspace:*
+        version: link:../../packages/compiler
+      '@sigil-native/lang':
+        specifier: workspace:*
+        version: link:../../packages/lang
+      '@sigil-native/web':
+        specifier: workspace:*
+        version: link:../../renderers/web
+    devDependencies:
+      tsdown:
+        specifier: ^0.15.0
+        version: 0.15.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@typescript/native-preview@7.0.0-dev.20260707.2)(typescript@5.9.3)
+
   packages/compiler: {}
 
   packages/lang: {}

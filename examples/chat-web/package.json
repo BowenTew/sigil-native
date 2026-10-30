@@ -1,0 +1,21 @@
+{
+  "name": "@sigil-native/example-chat-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ChatGPT-style web chat powered by sigil-native",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "node scripts/dev.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "@sigil-native/compiler": "workspace:*",
+    "@sigil-native/lang": "workspace:*",
+    "@sigil-native/web": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.15.0"
+  }
+}

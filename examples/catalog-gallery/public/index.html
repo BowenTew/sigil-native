@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sigil-native · catalog gallery</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <span class="brand">sigil-native</span>
+      <span class="subtitle">catalog gallery</span>
+      <span id="diagnostics" class="badge"></span>
+    </header>
+    <main class="grid">
+      <section class="col">
+        <h2>Sigil source</h2>
+        <pre id="source" class="pane"></pre>
+      </section>
+      <section class="col">
+        <h2>Rendered (native components)</h2>
+        <div id="ui" class="ui-root"></div>
+      </section>
+      <section class="col">
+        <h2>SigilOps · <span id="ops-count">0</span></h2>
+        <pre id="ops" class="pane"></pre>
+      </section>
+    </main>
+    <script type="module" src="/dist/main.js"></script>
+  </body>
+</html>
