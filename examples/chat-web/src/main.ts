@@ -357,7 +357,8 @@ async function sendUserMessage(text: string): Promise<void> {
 }
 
 async function startAssistant(conv: Conversation, userText: string): Promise<void> {
-  sendBtn.disabled = true
+  sendBtn.dataset.streaming = '1'
+  updateSendState()
   await sleep(250)
   const msg = addAssistantMessage()
   const rec: StoredMessage = { role: 'assistant', text: '', msgId: msg.id }
@@ -369,13 +370,14 @@ async function startAssistant(conv: Conversation, userText: string): Promise<voi
   } catch {
     setBadge(msg, '网关不可用 · 请检查 server 配置（SIGIL_LLM_*）', 'warn')
   }
-  sendBtn.disabled = false
+  sendBtn.dataset.streaming = '0'
+  updateSendState()
 }
 
 // Regenerate: drop the latest assistant reply (record, DOM, runner) and re-ask.
 async function regenerate(msg: LiveMessage): Promise<void> {
   const conv = activeConv()
-  if (!conv || sendBtn.disabled) return
+  if (!conv || sendBtn.dataset.streaming === '1') return
   const idx = conv.messages.findIndex(m => m.msgId === msg.id)
   if (idx < 1) return
   const userText = conv.messages[idx - 1].text
@@ -403,7 +405,14 @@ function autoGrow(): void {
   input.style.height = Math.min(input.scrollHeight, 180) + 'px'
 }
 
-input.addEventListener('input', autoGrow)
+function updateSendState(): void {
+  sendBtn.disabled = !input.value.trim() || sendBtn.dataset.streaming === '1'
+}
+
+input.addEventListener('input', () => {
+  autoGrow()
+  updateSendState()
+})
 input.addEventListener('keydown', (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
@@ -528,4 +537,5 @@ async function boot(): Promise<void> {
   renderChatList()
 }
 
+updateSendState()
 void boot()
