@@ -15,9 +15,9 @@ import type { Op } from '@sigil-native/runtime'
 // ------------------------------------------------------------------ dom refs
 const chatEl = document.getElementById('chat') as HTMLDivElement
 const composer = document.getElementById('composer') as HTMLFormElement
-const input = document.getElementById('input') as HTMLInputElement
+const input = document.getElementById('input') as HTMLTextAreaElement
+const mainEl = document.querySelector('.main') as HTMLElement
 const sendBtn = document.getElementById('send') as HTMLButtonElement
-const emptyState = document.getElementById('empty-state') as HTMLDivElement
 const chatList = document.getElementById('chat-list') as HTMLDivElement
 const connBadge = document.getElementById('conn-badge') as HTMLSpanElement
 const modelName = document.getElementById('model-name') as HTMLSpanElement
@@ -73,11 +73,14 @@ interface LiveMessage {
   codePre: HTMLPreElement
   opsPre: HTMLPreElement
   opsBtn: HTMLButtonElement
+  regenBtn?: HTMLButtonElement
   opsCount: Record<string, number>
   opsLines: number
   badge: HTMLSpanElement
   lastCompile: number
   lastDiags: number
+  runnerReady: boolean
+  pendingEval: boolean
 }
 
 let msgSeq = 0
@@ -114,11 +117,11 @@ function handleAction(data: { action?: string; text?: string; url?: string }): v
 
 // ------------------------------------------------------------------ chat UI
 function hideEmptyState(): void {
-  if (emptyState) emptyState.style.display = 'none'
+  mainEl.classList.remove('empty')
 }
 function showEmptyStateIfNeeded(): void {
   const conv = activeConv()
-  if (emptyState) emptyState.style.display = conv && conv.messages.length ? 'none' : ''
+  mainEl.classList.toggle('empty', !conv || conv.messages.length === 0)
 }
 
 function addUserMessage(text: string): void {
@@ -152,6 +155,9 @@ function addAssistantMessage(): LiveMessage {
   actions.className = 'actions'
   const copyBtn = document.createElement('button')
   copyBtn.textContent = '复制'
+  const regenBtn = document.createElement('button')
+  regenBtn.textContent = '重新生成'
+  regenBtn.disabled = true
   const srcBtn = document.createElement('button')
   srcBtn.textContent = 'Sigil 源码'
   const codeBtn = document.createElement('button')
@@ -160,7 +166,7 @@ function addAssistantMessage(): LiveMessage {
   opsBtn.textContent = '渲染指令'
   const badge = document.createElement('span')
   badge.className = 'badge'
-  actions.append(copyBtn, srcBtn, codeBtn, opsBtn, badge)
+  actions.append(copyBtn, regenBtn, srcBtn, codeBtn, opsBtn, badge)
 
   const srcPre = document.createElement('pre')
   srcPre.className = 'pane'
@@ -187,6 +193,15 @@ function addAssistantMessage(): LiveMessage {
   iframe.sandbox.add('allow-scripts')
   iframe.src = '/runner.html'
   document.body.appendChild(iframe)
+  iframe.addEventListener('load', () => {
+    const m = messages.get(id)
+    if (!m) return
+    m.runnerReady = true
+    if (m.pendingEval) {
+      m.pendingEval = false
+      compileAndSend(m)
+    }
+  })
 
   const msg: LiveMessage = {
     id,
@@ -205,11 +220,16 @@ function addAssistantMessage(): LiveMessage {
     badge,
     lastCompile: 0,
     lastDiags: 0,
+    runnerReady: false,
+    pendingEval: false,
   }
   copyBtn.onclick = () => {
     void navigator.clipboard?.writeText(msg.raw)
-    toast('已复制')
+    copyBtn.textContent = '已复制 ✓'
+    setTimeout(() => (copyBtn.textContent = '复制'), 1500)
   }
+  msg.regenBtn = regenBtn
+  regenBtn.onclick = () => void regenerate(msg)
   messages.set(id, msg)
   return msg
 }
@@ -311,6 +331,10 @@ async function streamResponse(msg: LiveMessage, conv: Conversation): Promise<voi
 
 // The "server side" of the architecture: raw Sigil in, runnable program out.
 function compileAndSend(msg: LiveMessage): void {
+  if (!msg.runnerReady) {
+    msg.pendingEval = true
+    return
+  }
   const { nodes, diagnostics } = parseSigil(msg.raw)
   const out = compile(nodes, { catalog: new Set<string>(CATALOG_TAGS), diagnostics })
   msg.lastDiags = out.diagnostics.length
@@ -329,12 +353,16 @@ async function sendUserMessage(text: string): Promise<void> {
   saveConversations()
   renderChatList()
   addUserMessage(text)
-  sendBtn.disabled = true
+  await startAssistant(conv, text)
+}
 
+async function startAssistant(conv: Conversation, userText: string): Promise<void> {
+  sendBtn.disabled = true
   await sleep(250)
   const msg = addAssistantMessage()
   const rec: StoredMessage = { role: 'assistant', text: '', msgId: msg.id }
   conv.messages.push(rec)
+  updateRegenButtons()
   await sleep(250) // let the runner iframe boot
   try {
     await streamResponse(msg, conv)
@@ -344,17 +372,55 @@ async function sendUserMessage(text: string): Promise<void> {
   sendBtn.disabled = false
 }
 
+// Regenerate: drop the latest assistant reply (record, DOM, runner) and re-ask.
+async function regenerate(msg: LiveMessage): Promise<void> {
+  const conv = activeConv()
+  if (!conv || sendBtn.disabled) return
+  const idx = conv.messages.findIndex(m => m.msgId === msg.id)
+  if (idx < 1) return
+  const userText = conv.messages[idx - 1].text
+  conv.messages.splice(idx, 1)
+  saveConversations()
+  messages.delete(msg.id)
+  msg.iframe.remove()
+  msg.placeholder.closest('.msg')?.remove()
+  await startAssistant(conv, userText)
+}
+
+// Only the latest assistant message offers 重新生成.
+function updateRegenButtons(): void {
+  const conv = activeConv()
+  const last = conv?.messages[conv.messages.length - 1]
+  for (const m of messages.values()) {
+    if (m.regenBtn) m.regenBtn.disabled = !last || last.msgId !== m.id
+  }
+}
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+function autoGrow(): void {
+  input.style.height = 'auto'
+  input.style.height = Math.min(input.scrollHeight, 180) + 'px'
+}
+
+input.addEventListener('input', autoGrow)
+input.addEventListener('keydown', (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault()
+    composer.requestSubmit()
+  }
+})
 
 composer.addEventListener('submit', (e: Event) => {
   e.preventDefault()
   const text = input.value.trim()
   if (!text) return
   input.value = ''
+  autoGrow()
   void sendUserMessage(text)
 })
 
-emptyState.addEventListener('click', (e: Event) => {
+document.querySelector('.starter-chips')!.addEventListener('click', (e: Event) => {
   const q = (e.target as HTMLElement).dataset?.q
   if (q) void sendUserMessage(q)
 })
@@ -422,6 +488,7 @@ function renderConversation(): void {
     }
   }
   scrollDown()
+  updateRegenButtons()
 }
 
 function switchConversation(id: string): void {
@@ -456,6 +523,7 @@ async function boot(): Promise<void> {
     /* offline */
   }
   if (!conversations.length) newConversation()
+  else activeId = conversations[0].id
   renderConversation()
   renderChatList()
 }

@@ -23,10 +23,21 @@
     <script>
       ;(function () {
         var worker = null
+        var startPromise = null // single-flight: concurrent evals must not spawn two workers
         var lastEval = null // re-sent to the worker after a watchdog restart
         var watchdog = null
         var msgId = null
         var restarts = 0
+
+        function ensureWorker() {
+          if (!startPromise) {
+            startPromise = start().then(function (w) {
+              worker = w
+              return w
+            })
+          }
+          return startPromise
+        }
 
         function start() {
           return fetch('./worker.iife.js')
@@ -67,10 +78,11 @@
               worker.terminate()
             } catch (_) {}
             worker = null
+            startPromise = null
             restarts++
-            start().then(function (w) {
-              worker = w
-              if (lastEval && restarts <= 2) {
+            ensureWorker().then(function (w) {
+              if (w && lastEval && restarts <= 2) {
+                armWatchdog()
                 worker.postMessage(lastEval)
               }
             })
@@ -89,10 +101,8 @@
           if (d.__sigil !== 'host') return
           msgId = d.msgId
           if (!worker) {
-            start().then(function (w) {
-              if (!w) return
-              worker = w
-              handle(d)
+            ensureWorker().then(function (w) {
+              if (w) handle(d)
             })
           } else {
             handle(d)

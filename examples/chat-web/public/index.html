@@ -37,21 +37,14 @@
           <span id="conn-badge" class="conn-badge"></span>
         </header>
 
-        <div id="chat">
+        <div id="chat"></div>
+
+        <div class="composer-wrap" id="composer-wrap">
           <div id="empty-state">
             <h1>有什么可以帮忙的？</h1>
-            <div class="starter-cards">
-              <button data-q="帮我做一个团队定价的滑块小组件">💰 团队定价滑块组件</button>
-              <button data-q="策划一个 6 人晚餐派对菜单">🍖 晚餐派对菜单</button>
-              <button data-q="用一个交互图表对比三种手机套餐">📊 套餐对比图表</button>
-              <button data-q="做一个番茄钟工具，能开始暂停重置">🍅 番茄钟工具</button>
-            </div>
           </div>
-        </div>
-
-        <div class="composer-wrap">
           <form id="composer">
-            <input id="input" placeholder="给 sigil-native 发消息" autocomplete="off" />
+            <textarea id="input" rows="1" placeholder="给 sigil-native 发消息"></textarea>
             <button type="submit" id="send" title="发送">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -64,6 +57,12 @@
               </svg>
             </button>
           </form>
+          <div class="starter-chips">
+            <button data-q="帮我做一个团队定价的滑块小组件">💰 团队定价滑块组件</button>
+            <button data-q="策划一个 6 人晚餐派对菜单">🍖 晚餐派对菜单</button>
+            <button data-q="用一个交互图表对比三种手机套餐">📊 套餐对比图表</button>
+            <button data-q="做一个番茄钟工具，能开始暂停重置">🍅 番茄钟工具</button>
+          </div>
           <p class="disclaimer">界面由模型生成的 Sigil 语言实时编译渲染 · 内容仅供参考</p>
         </div>
       </main>
